@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UX Principles Playground</title>
+<meta name="description" content="Well-known UX principles, each with a small timed test you can try yourself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EEF1F6;
+    --surface: #FFFFFF;
+    --ink: #141B33;
+    --muted: #4A5370;
+    --line: #C3CBDB;
+    --hi: #FFE066;
+    --hi-ink: #141B33;
+    --good: #1F7A55;
+    --bad: #A3204F;
+    --focus: #2F5BEA;
+    --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+    --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #10152A;
+      --surface: #1A2140;
+      --ink: #EEF1F6;
+      --muted: #A9B2CC;
+      --line: #36406A;
+      --hi: #E8C547;
+      --good: #5FD1A0;
+      --bad: #FF7AA8;
+      --focus: #8EA8FF;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* Hero */
+  header.hero { padding: 72px 0 40px; }
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.6rem, 7.5vw, 5.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin: 0 0 24px;
+    max-width: 12ch;
+  }
+  .hero p { max-width: 60ch; color: var(--muted); font-size: 1.2rem; margin: 0 0 12px; }
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; padding: 0; list-style: none; }
+  .jump a {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .jump a:hover { background: var(--hi); color: var(--hi-ink); border-color: var(--hi-ink); }
+
+  /* Law sections */
+  .law { border-top: 3px solid var(--ink); padding: 40px 0 64px; scroll-margin-top: 16px; }
+  .law-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; margin-bottom: 20px; }
+  .law h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    margin: 0;
+  }
+  .origin { color: var(--muted); margin: 0; }
+  .law-body { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; margin-bottom: 24px; }
+  .statement { font-size: 1.35rem; line-height: 1.4; margin: 0; max-width: 34ch; }
+  .use h3 { font-family: var(--display); font-weight: 500; font-size: 1.05rem; margin: 0 0 4px; }
+  .use p { margin: 0; color: var(--muted); }
+  .task { margin: 0 0 16px; }
+
+  .trials { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .trial { background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .trial-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; border-bottom: 1.5px solid var(--line);
+  }
+  .variant { font-weight: 700; }
+  .time { font-family: var(--display); font-weight: 800; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+
+  .stage {
+    position: relative;
+    min-height: 280px;
+    padding: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background-image: radial-gradient(var(--line) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+  .start {
+    font-family: var(--display); font-weight: 800; font-size: 1.05rem;
+    padding: 12px 22px; border: 0; border-radius: 8px;
+    background: var(--ink); color: var(--paper); cursor: pointer;
+  }
+  .start.corner { position: absolute; left: 14px; bottom: 14px; }
+
+  .compare { min-height: 1.6em; margin: 16px 0 0; font-size: 1.15rem; }
+  .compare mark { background: var(--hi); color: var(--hi-ink); padding: 2px 6px; border-radius: 3px; }
+
+  button { font: inherit; color: inherit; }
+  .miss { outline: 3px solid var(--bad) !important; outline-offset: 1px; }
+
+  /* Fitts */
+  .target {
+    position: absolute; border: 0; border-radius: 6px;
+    background: var(--good); color: #fff; font-weight: 700; cursor: pointer;
+  }
+
+  /* Hick */
+  .menu { display: grid; gap: 6px; width: 100%; align-self: stretch; align-content: start; }
+  .menu.many { grid-template-columns: repeat(4, 1fr); }
+  .menu.few { grid-template-columns: repeat(2, 1fr); max-width: 300px; margin: auto; align-self: center; }
+  .menu button {
+    padding: 8px 6px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--paper); cursor: pointer; font-size: 0.9rem;
+  }
+
+  /* Jakob */
+  .shop { width: 100%; align-self: stretch; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 0.9rem; }
+  .shop-head, .shop-foot { display: flex; align-items: center; gap: 14px; padding: 10px 12px; }
+  .shop-head { border-bottom: 1px solid var(--line); }
+  .shop-head strong { font-family: var(--display); font-size: 1.1rem; margin-right: auto; }
+  .shop-foot { border-top: 1px solid var(--line); flex-wrap: wrap; justify-content: center; gap: 4px 14px; color: var(--muted); }
+  .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px; flex: 1; }
+  .shop-grid div { background: var(--line); border-radius: 6px; min-height: 70px; opacity: 0.6; }
+  .link-btn { background: none; border: 0; padding: 2px 0; cursor: pointer; color: inherit; font-size: 0.85rem; }
+  .cart-top { background: var(--ink); color: var(--paper); border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-weight: 700; }
+
+  /* Chunking */
+  .stack { display: grid; gap: 14px; justify-items: center; width: 100%; }
+  .code { font-family: var(--display); font-weight: 500; font-size: clamp(1.4rem, 3.5vw, 2rem); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+  .stack input, .form input {
+    font: inherit; width: 100%; max-width: 280px; padding: 10px 12px;
+    border: 1.5px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink);
+  }
+
+  /* Von Restorff */
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; width: 100%; }
+  .plan {
+    display: grid; gap: 2px; padding: 16px 8px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--paper); cursor: pointer; text-align: center;
+  }
+  .plan b { font-family: var(--display); }
+  .plan span { color: var(--muted); font-size: 0.85rem; }
+  .plan-odd { background: var(--hi); color: var(--hi-ink); border: 2px solid var(--hi-ink); }
+  .plan-odd span { color: var(--hi-ink); }
+
+  /* Proximity */
+  .form { width: 100%; max-width: 280px; }
+  .form div { font-weight: 700; font-size: 0.95rem; }
+  .form input { display: block; cursor: pointer; }
+  .form-loose div { margin: 14px 0; }
+  .form-tight div { margin: 20px 0 4px; }
+  .form-tight div:first-child, .form-loose div:first-child { margin-top: 0; }
+
+  /* Doherty */
+  .save-demo { display: grid; gap: 12px; justify-items: center; }
+  .save {
+    font-family: var(--display); font-weight: 800; padding: 12px 22px; border-radius: 8px;
+    border: 0; background: var(--ink); color: var(--paper); cursor: pointer; min-width: 150px;
+  }
+  .save.busy { opacity: 0.7; }
+  .status { margin: 0; color: var(--muted); min-height: 1.5em; }
+
+  footer { border-top: 3px solid var(--ink); padding: 32px 0 56px; color: var(--muted); }
+  footer a { color: var(--ink); }
+
+  @media (max-width: 760px) {
+    .law-body, .trials { grid-template-columns: 1fr; }
+    .menu.many { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+  <header class="hero wrap">
+    <h1>UX principles you can feel</h1>
+    <p>Each principle comes with a small test. Do the task in version A, then in version B, and compare your times.</p>
+    <p>Your times stay in your browser. Nothing is recorded or sent anywhere.</p>
+    <ul class="jump" id="jump"></ul>
+  </header>
+
+  <main class="wrap" id="main"></main>
+
+  <footer class="wrap">
+    <p>Made by Your Name. Principles come from published research; every demo here is original.</p>
+    <p>Want to add a principle? See the README on <a href="https://github.com/jolanta-io/ux-laws-playground">GitHub</a>.</p>
+  </footer>
+
+<script>
+/* ---------- Helpers ---------- */
+const h = (tag, attrs = {}, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v);
+  }
+  kids.flat().forEach(k => el.append(k));
+  return el;
+};
+const shuffle = arr => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+const miss = el => {
+  el.classList.add("miss");
+  setTimeout(() => el.classList.remove("miss"), 450);
+};
+
+/* ---------- Principles ----------
+   To add one, push an object to LAWS with:
+   id, name, origin, statement, use, task,
+   and either build(stage, variant, done) for a timed A/B test
+   or mount(row) for a custom demo. Variant "a" is the harder one. */
+const LAWS = [
+  {
+    id: "fitts",
+    name: "Fitts's Law",
+    origin: "Paul Fitts, 1954",
+    statement: "The time it takes to reach a target depends on how far away it is and how big it is.",
+    use: "Make primary actions large and place them close to where the person's attention already is.",
+    task: "Press Start, then click OK as fast as you can.",
+    startCorner: true,
+    build(stage, v, done) {
+      const btn = h("button", { class: "target", onclick: done }, "OK");
+      btn.style.cssText = v === "b"
+        ? "left:120px;bottom:14px;width:140px;height:50px;"
+        : "right:12px;top:12px;width:28px;height:20px;font-size:10px;padding:0;";
+      stage.append(btn);
+    }
+  },
+  {
+    id: "hick",
+    name: "Hick's Law",
+    origin: "William Hick and Ray Hyman, 1952",
+    statement: "The more options people see, the longer it takes them to choose one.",
+    use: "Show the few options most people need, and tuck the rest behind progressive disclosure.",
+    task: "Find and click Export.",
+    build(stage, v, done) {
+      const many = ["New", "Open", "Open recent", "Save", "Save as", "Duplicate", "Rename", "Move to",
+        "Version history", "Import", "Export", "Share", "Publish", "Print", "Page setup", "Preferences",
+        "Plugins", "Shortcuts", "Help", "Feedback", "What's new", "Sign out", "Close", "Quit"];
+      const few = ["New", "Open", "Save", "Export", "Share", "Print"];
+      const menu = h("div", { class: "menu " + (v === "a" ? "many" : "few") });
+      shuffle(v === "a" ? many : few).forEach(label => {
+        const b = h("button", {}, label);
+        b.addEventListener("click", () => label === "Export" ? done() : miss(b));
+        menu.append(b);
+      });
+      stage.append(menu);
+    }
+  },
+  {
+    id: "jakob",
+    name: "Jakob's Law",
+    origin: "Jakob Nielsen, 2000",
+    statement: "People spend most of their time on other sites, so they expect yours to work the same way.",
+    use: "Put familiar things where people already look for them. Save originality for what makes your product different.",
+    task: "Open your cart.",
+    build(stage, v, done) {
+      const cart = () => h("button", { class: v === "b" ? "cart-top" : "link-btn", onclick: done }, "Cart (2)");
+      const dud = label => { const b = h("button", { class: "link-btn" }, label); b.addEventListener("click", () => miss(b)); return b; };
+      const head = h("div", { class: "shop-head" },
+        h("strong", {}, "Fernly"), dud("Plants"), dud("Pots"), dud("Care"),
+        v === "b" ? cart() : dud("Account"));
+      const grid = h("div", { class: "shop-grid" }, ...Array.from({ length: 6 }, () => h("div")));
+      const foot = h("div", { class: "shop-foot" },
+        dud("About"), dud("Shipping"), dud("Returns"), v === "a" ? cart() : dud("Gift cards"), dud("Contact"));
+      stage.append(h("div", { class: "shop" }, head, grid, foot));
+    }
+  },
+  {
+    id: "chunking",
+    name: "Chunking",
+    origin: "George A. Miller, 1956",
+    statement: "People process information more easily when it's broken into small, meaningful groups.",
+    use: "Group long strings like phone numbers, codes and card numbers. Split long forms into clear sections.",
+    task: "Type the account number into the field.",
+    build(stage, v, done) {
+      const digits = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10)).join("");
+      const shown = v === "b" ? `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}` : digits;
+      const input = h("input", { type: "text", inputmode: "numeric", autocomplete: "off",
+        "aria-label": "Account number", placeholder: "Type it here" });
+      input.addEventListener("input", () => { if (input.value.replace(/\D/g, "") === digits) done(); });
+      stage.append(h("div", { class: "stack" }, h("div", { class: "code" }, shown), input));
+      input.focus();
+    }
+  },
+  {
+    id: "restorff",
+    name: "Von Restorff Effect",
+    origin: "Hedwig von Restorff, 1933",
+    statement: "When several similar things appear together, the one that's different is the one people notice and remember.",
+    use: "Make the most important option visually distinct. Use it sparingly, or nothing stands out.",
+    task: "Choose the Team plan.",
+    build(stage, v, done) {
+      const prices = { Starter: "$0", Basic: "$8", Team: "$24", Pro: "$16", Business: "$40" };
+      const wrap = h("div", { class: "plans" });
+      shuffle(Object.keys(prices)).forEach(name => {
+        const b = h("button", { class: "plan" + (v === "b" && name === "Team" ? " plan-odd" : "") },
+          h("b", {}, name), h("span", {}, prices[name] + " a month"));
+        b.addEventListener("click", () => name === "Team" ? done() : miss(b));
+        wrap.append(b);
+      });
+      stage.append(wrap);
+    }
+  },
+  {
+    id: "proximity",
+    name: "Law of Proximity",
+    origin: "Gestalt psychology, 1920s",
+    statement: "Things that are close together are seen as belonging together.",
+    use: "Keep labels tight to their fields and put more space between groups than within them.",
+    task: "Click the field for Last name.",
+    build(stage, v, done) {
+      const form = h("div", { class: "form " + (v === "a" ? "form-loose" : "form-tight") });
+      ["First name", "Last name", "Email"].forEach(name => {
+        const input = h("input", { type: "text", readonly: "", "aria-label": name });
+        input.addEventListener("click", () => name === "Last name" ? done() : miss(input));
+        form.append(h("div", {}, name), input);
+      });
+      stage.append(form);
+    }
+  },
+  {
+    id: "doherty",
+    name: "Doherty Threshold",
+    origin: "Walter Doherty and Ahrvind Thadani, 1982",
+    statement: "People stay engaged when a system responds in under about 400 milliseconds.",
+    use: "Respond to every action right away, even if the real work takes longer. Show progress the moment something starts.",
+    task: "Click Save draft in each version and notice how each one feels.",
+    mount(row) {
+      ["a", "b"].forEach(v => {
+        const status = h("p", { class: "status", "aria-live": "polite" }, "Not saved yet");
+        const btn = h("button", { class: "save" }, "Save draft");
+        const stamp = () => "Saved at " + new Date().toLocaleTimeString();
+        btn.addEventListener("click", () => {
+          if (v === "a") {
+            setTimeout(() => { status.textContent = stamp(); }, 1600);
+          } else {
+            btn.classList.add("busy");
+            btn.textContent = "Saving…";
+            status.textContent = "Saving…";
+            setTimeout(() => {
+              btn.classList.remove("busy");
+              btn.textContent = "Save draft";
+              status.textContent = stamp();
+            }, 300);
+          }
+        });
+        row.append(h("div", { class: "trial" },
+          h("div", { class: "trial-head" }, h("span", { class: "variant" }, "Version " + v.toUpperCase())),
+          h("div", { class: "stage" }, h("div", { class: "save-demo" }, btn, status))));
+      });
+    }
+  }
+];
+
+/* ---------- Timed A/B panels ---------- */
+function compare(section) {
+  const a = +section.querySelector('[data-v="a"]').dataset.ms || 0;
+  const b = +section.querySelector('[data-v="b"]').dataset.ms || 0;
+  const out = section.querySelector(".compare");
+  if (!a || !b) return;
+  if (b < a) {
+    out.replaceChildren(h("mark", {}, `Version B was ${(a / b).toFixed(1)}× faster for you.`));
+  } else {
+    out.textContent = "Version B wasn't faster this time. First tries are noisy, so run each one again.";
+  }
+}
+
+function makeTrial(law, v, section) {
+  const time = h("span", { class: "time", "aria-live": "polite" }, "–");
+  const stage = h("div", { class: "stage" });
+  const panel = h("div", { class: "trial", "data-v": v },
+    h("div", { class: "trial-head" }, h("span", { class: "variant" }, "Version " + v.toUpperCase()), time),
+    stage);
+
+  const reset = label => stage.replaceChildren(
+    h("button", { class: "start" + (law.startCorner ? " corner" : ""), onclick: run }, label));
+
+  function run() {
+    stage.replaceChildren();
+    const t0 = performance.now();
+    let finished = false;
+    law.build(stage, v, () => {
+      if (finished) return;
+      finished = true;
+      const ms = Math.round(performance.now() - t0);
+      panel.dataset.ms = ms;
+      time.textContent = ms.toLocaleString() + " ms";
+      reset("Try again");
+      compare(section);
+    });
+  }
+
+  reset("Start");
+  return panel;
+}
+
+/* ---------- Render ---------- */
+const main = document.getElementById("main");
+const jump = document.getElementById("jump");
+
+LAWS.forEach(law => {
+  const section = h("section", { class: "law", id: law.id, "aria-labelledby": law.id + "-h" },
+    h("div", { class: "law-head" },
+      h("h2", { id: law.id + "-h" }, law.name),
+      h("p", { class: "origin" }, law.origin)),
+    h("div", { class: "law-body" },
+      h("p", { class: "statement" }, law.statement),
+      h("div", { class: "use" }, h("h3", {}, "Use it"), h("p", {}, law.use))),
+    h("p", { class: "task" }, h("strong", {}, "Your task: "), law.task));
+
+  const row = h("div", { class: "trials" });
+  section.append(row);
+  if (law.mount) {
+    law.mount(row);
+  } else {
+    ["a", "b"].forEach(v => row.append(makeTrial(law, v, section)));
+    section.append(h("p", { class: "compare", "aria-live": "polite" }));
+  }
+
+  main.append(section);
+  jump.append(h("li", {}, h("a", { href: "#" + law.id }, law.name)));
+});
+</script>
+</body>
+</html>
